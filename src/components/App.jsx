@@ -1,14 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
-import { ContactForm } from "./ContacForm/ContacForm";
-import { Contacts } from "./Contacts/Contacts";
-import { Filter } from "./Filter/Filter";
+import { ContactForm } from './ContacForm/ContacForm';
+import { Contacts } from './Contacts/Contacts';
+import { Filter } from './Filter/Filter';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 
-const LOCALSTOREG_KEY = "contact"
+const LOCALSTOREG_KEY = 'contact';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -18,93 +18,158 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+export function App() {
+  const [contacts, setContacts] = useState(
+    JSON.parse(localStorage.getItem(LOCALSTOREG_KEY)) || []
+  );
+  const [filter, setFilter] = useState('');
+  // state = {
+  //   contacts: [],
+  //   filter: '',
+  // };
 
-export class App extends React.Component {
-  
-state = {
-  contacts: [],
-  filter: "",
-  }
+  useEffect(
+    () => localStorage.setItem(LOCALSTOREG_KEY, JSON.stringify(contacts)),
+    [contacts]
+  );
 
-  componentDidMount() {
-    const contact = JSON.parse(localStorage.getItem(LOCALSTOREG_KEY))
-    if (contact) {
-      this.setState({contacts:contact})
-    }
-  }
-
-
-componentDidUpdate(prevProps, prevState) {
-    const{contacts} = this.state
-    if (prevState.contacts !== contacts) {
-      localStorage.setItem(LOCALSTOREG_KEY, JSON.stringify(contacts));
-  }
-}
-
-
-  onFilter = ev => {
+  const onFilter = ev => {
     console.log(ev.currentTarget.value);
-    this.setState({
-     filter: ev.currentTarget.value
-    })
-  }
-  
-  datamy = data => {
-    console.log(data);
-  }
-  
-  deleteContact = id => {
-    this.setState(prv => ({
-      contacts: prv.contacts.filter(cont => cont.id !== id)
-    }));
-  }
+    setFilter(ev.currentTarget.value);
+  };
 
+  // datamy = data => {
+  //   console.log(data);
+  // };
 
+  const deleteContact = id => {
+    setContacts(contacts.filter(cont => cont.id !== id));
+  };
 
-  handleAdd = (formdate) => {
+  const handleAdd = formdate => {
     const { name, number } = formdate;
 
-    if (this.state.contacts.find((elem) => elem.name === name))
-    {
-      alert(`Person with name ${name} is in a date`)
-      return
-      }
-    
-    this.setState(({ contacts }) => (
-      {
-        contacts: [...contacts, { id: nanoid(5), name, number }]
+    if (contacts.find(elem => elem.name === name)) {
+      alert(`Person with name ${name} is in a date`);
+      return;
     }
-    ))
-  }
 
-  render() {
+    setContacts(contacts => [...contacts, { id: nanoid(5), name, number }]);
+  };
 
-    const {contacts,filter} =this.state
-    const filterContacts = contacts.filter(
-      (cont) => cont.name.toLowerCase().includes(filter.toLowerCase()))
-    return (
-      <div
-        style={{
-          height: '100vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          fontSize: 40,
-          color: '#010101',
-          flexDirection: "column"
-        }}
-      >
-        <ContactForm onSubmit={this.handleAdd} contacts={contacts} />
-        <Filter filter={this.currentTarget} func={this.onFilter} len={contacts} />
-        <Box sx={{ width: '100%' }}>
-          <Stack spacing={2}>
-            <Item>
-              <Contacts props={filterContacts} delCont={this.deleteContact} />
-            </Item>
-          </Stack>
-          </Box>
-        
-      </div>
-    );
-  }
-};
+  // const { contacts, filter } = this.state;
+  const filterContacts = contacts.filter(cont =>
+    cont.name.toLowerCase().includes(filter.toLowerCase())
+  );
+
+  return (
+    <div
+      style={{
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: 40,
+        color: '#010101',
+        flexDirection: 'column',
+      }}
+    >
+      <ContactForm onSubmit={handleAdd} contacts={contacts} />
+      <Filter filter={filter} func={onFilter} len={contacts} />
+      <Box sx={{ width: '100%' }}>
+        <Stack spacing={2}>
+          <Item>
+            <Contacts props={filterContacts} delCont={deleteContact} />
+          </Item>
+        </Stack>
+      </Box>
+    </div>
+  );
+}
+
+// export class App extends React.Component {
+//   // const [contacts,setContacts] = useReduce()
+
+//   state = {
+//     contacts: [],
+//     filter: '',
+//   };
+
+//   componentDidMount() {
+//     const contact = JSON.parse(localStorage.getItem(LOCALSTOREG_KEY));
+//     if (contact) {
+//       this.setState({ contacts: contact });
+//     }
+//   }
+
+//   componentDidUpdate(prevProps, prevState) {
+//     const { contacts } = this.state;
+//     if (prevState.contacts !== contacts) {
+//       localStorage.setItem(LOCALSTOREG_KEY, JSON.stringify(contacts));
+//     }
+//   }
+
+//   onFilter = ev => {
+//     console.log(ev.currentTarget.value);
+//     this.setState({
+//       filter: ev.currentTarget.value,
+//     });
+//   };
+
+//   datamy = data => {
+//     console.log(data);
+//   };
+
+//   deleteContact = id => {
+//     this.setState(prv => ({
+//       contacts: prv.contacts.filter(cont => cont.id !== id),
+//     }));
+//   };
+
+//   handleAdd = formdate => {
+//     const { name, number } = formdate;
+
+//     if (this.state.contacts.find(elem => elem.name === name)) {
+//       alert(`Person with name ${name} is in a date`);
+//       return;
+//     }
+
+//     this.setState(({ contacts }) => ({
+//       contacts: [...contacts, { id: nanoid(5), name, number }],
+//     }));
+//   };
+
+//   render() {
+//     const { contacts, filter } = this.state;
+//     const filterContacts = contacts.filter(cont =>
+//       cont.name.toLowerCase().includes(filter.toLowerCase())
+//     );
+//     return (
+//       <div
+//         style={{
+//           height: '100vh',
+//           display: 'flex',
+//           justifyContent: 'center',
+//           alignItems: 'center',
+//           fontSize: 40,
+//           color: '#010101',
+//           flexDirection: 'column',
+//         }}
+//       >
+//         <ContactForm onSubmit={this.handleAdd} contacts={contacts} />
+//         <Filter
+//           filter={this.currentTarget}
+//           func={this.onFilter}
+//           len={contacts}
+//         />
+//         <Box sx={{ width: '100%' }}>
+//           <Stack spacing={2}>
+//             <Item>
+//               <Contacts props={filterContacts} delCont={this.deleteContact} />
+//             </Item>
+//           </Stack>
+//         </Box>
+//       </div>
+//     );
+//   }
+// }
