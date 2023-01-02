@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { nanoid } from 'nanoid';
 import { ContactForm } from './ContacForm/ContacForm';
 import { Contacts } from './Contacts/Contacts';
@@ -20,13 +20,9 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export function App() {
   const [contacts, setContacts] = useState(
-    JSON.parse(localStorage.getItem(LOCALSTOREG_KEY)) || []
+    JSON.parse(localStorage.getItem(LOCALSTOREG_KEY)) ?? []
   );
   const [filter, setFilter] = useState('');
-  // state = {
-  //   contacts: [],
-  //   filter: '',
-  // };
 
   useEffect(
     () => localStorage.setItem(LOCALSTOREG_KEY, JSON.stringify(contacts)),
@@ -38,9 +34,6 @@ export function App() {
     setFilter(ev.currentTarget.value);
   };
 
-  // datamy = data => {
-  //   console.log(data);
-  // };
 
   const deleteContact = id => {
     setContacts(contacts.filter(cont => cont.id !== id));
@@ -57,10 +50,10 @@ export function App() {
     setContacts(contacts => [...contacts, { id: nanoid(5), name, number }]);
   };
 
-  // const { contacts, filter } = this.state;
-  const filterContacts = contacts.filter(cont =>
-    cont.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const filterContacts = contacts.filter(cont => {
+    console.log('filtr');
+    return cont.name.toLowerCase().includes(filter.toLowerCase());
+  });
 
   return (
     <div
@@ -87,89 +80,3 @@ export function App() {
   );
 }
 
-// export class App extends React.Component {
-//   // const [contacts,setContacts] = useReduce()
-
-//   state = {
-//     contacts: [],
-//     filter: '',
-//   };
-
-//   componentDidMount() {
-//     const contact = JSON.parse(localStorage.getItem(LOCALSTOREG_KEY));
-//     if (contact) {
-//       this.setState({ contacts: contact });
-//     }
-//   }
-
-//   componentDidUpdate(prevProps, prevState) {
-//     const { contacts } = this.state;
-//     if (prevState.contacts !== contacts) {
-//       localStorage.setItem(LOCALSTOREG_KEY, JSON.stringify(contacts));
-//     }
-//   }
-
-//   onFilter = ev => {
-//     console.log(ev.currentTarget.value);
-//     this.setState({
-//       filter: ev.currentTarget.value,
-//     });
-//   };
-
-//   datamy = data => {
-//     console.log(data);
-//   };
-
-//   deleteContact = id => {
-//     this.setState(prv => ({
-//       contacts: prv.contacts.filter(cont => cont.id !== id),
-//     }));
-//   };
-
-//   handleAdd = formdate => {
-//     const { name, number } = formdate;
-
-//     if (this.state.contacts.find(elem => elem.name === name)) {
-//       alert(`Person with name ${name} is in a date`);
-//       return;
-//     }
-
-//     this.setState(({ contacts }) => ({
-//       contacts: [...contacts, { id: nanoid(5), name, number }],
-//     }));
-//   };
-
-//   render() {
-//     const { contacts, filter } = this.state;
-//     const filterContacts = contacts.filter(cont =>
-//       cont.name.toLowerCase().includes(filter.toLowerCase())
-//     );
-//     return (
-//       <div
-//         style={{
-//           height: '100vh',
-//           display: 'flex',
-//           justifyContent: 'center',
-//           alignItems: 'center',
-//           fontSize: 40,
-//           color: '#010101',
-//           flexDirection: 'column',
-//         }}
-//       >
-//         <ContactForm onSubmit={this.handleAdd} contacts={contacts} />
-//         <Filter
-//           filter={this.currentTarget}
-//           func={this.onFilter}
-//           len={contacts}
-//         />
-//         <Box sx={{ width: '100%' }}>
-//           <Stack spacing={2}>
-//             <Item>
-//               <Contacts props={filterContacts} delCont={this.deleteContact} />
-//             </Item>
-//           </Stack>
-//         </Box>
-//       </div>
-//     );
-//   }
-// }

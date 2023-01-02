@@ -8,11 +8,6 @@ import style from './ContacForm.module.scss';
 import PropTypes from 'prop-types';
 
 export const ContactForm = ({ onSubmit, contacts }) => {
-  // state = {
-  //   name: '',
-  //   number: '',
-
-  // }
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -36,7 +31,6 @@ export const ContactForm = ({ onSubmit, contacts }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    // const { name } = this.state;
     onSubmit({ name, number });
     if (contacts.find(i => i.name === name)) {
       return;
