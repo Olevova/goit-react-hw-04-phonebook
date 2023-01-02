@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 import { ContactForm } from './ContacForm/ContacForm';
 import { Contacts } from './Contacts/Contacts';
@@ -33,7 +33,6 @@ export function App() {
     console.log(ev.currentTarget.value);
     setFilter(ev.currentTarget.value);
   };
-
 
   const deleteContact = id => {
     setContacts(contacts.filter(cont => cont.id !== id));
@@ -79,4 +78,3 @@ export function App() {
     </div>
   );
 }
-
